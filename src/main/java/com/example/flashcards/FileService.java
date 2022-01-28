@@ -1,5 +1,6 @@
 package com.example.flashcards;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -15,7 +16,11 @@ class FileService {
 
     //(klasa odpowiada za odczyt i zapis danych z/do pliku)
 
-    private String fileName = "data.csv";
+    private String fileName;
+
+    public FileService(@Value(("${filename}"))String fileName) {
+        this.fileName = fileName;
+    }
 
     List<Entry> readAllFile() throws IOException {
         return Files.readAllLines(Paths.get(fileName))
