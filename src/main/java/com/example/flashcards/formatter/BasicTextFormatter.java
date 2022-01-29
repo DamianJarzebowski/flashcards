@@ -1,10 +1,9 @@
 package com.example.flashcards.formatter;
 
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("normal")
 public class BasicTextFormatter implements TextFormatter{
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.flashcards;
 
+import com.example.flashcards.crypto.CipherService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +18,17 @@ class FileService {
     //(klasa odpowiada za odczyt i zapis danych z/do pliku)
 
     private String fileName;
+    private CipherService cipherService;
 
-    public FileService(@Value(("${filename}"))String fileName) {
+    public FileService(@Value(("${filename}"))String fileName, CipherService cipherService) {
         this.fileName = fileName;
+        this.cipherService = cipherService;
     }
 
     List<Entry> readAllFile() throws IOException {
         return Files.readAllLines(Paths.get(fileName))
                 .stream()
+                .map(cipherService::decrypt)
                 .map(CsvEntryConverter::parse)
                 .collect(Collectors.toList());
     }
@@ -32,7 +36,7 @@ class FileService {
     void saveEntries(List<Entry> entries) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
         for (Entry entry : entries) {
-            writer.write(entry.toString());
+            writer.write(cipherService.encrypt(entry.toString()));
             writer.newLine();
         }
         writer.close();
